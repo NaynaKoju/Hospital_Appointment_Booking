@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="alert alert-success mt-4">
+    <h4 class="alert-heading">Appointment Booked Successfully!</h4>
+    <p>Dear Patient, your appointment has been confirmed.</p>
+    <hr>
+    <ul class="list-group">
+        <li class="list-group-item"><strong>Doctor:</strong> {{ doctor.name }}</li>
+        <li class="list-group-item"><strong>Specialization:</strong> {{ doctor.specialization }}</li>
+        <li class="list-group-item"><strong>Your Turn Number:</strong> {{ turn }}</li>
+    </ul>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Back to Home</a>
+</div>
+{% endblock %}
