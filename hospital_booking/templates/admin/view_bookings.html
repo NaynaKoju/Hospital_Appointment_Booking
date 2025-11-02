@@ -1,47 +1,79 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 {% block content %}
-<h2 class="mb-4">All Bookings</h2>
+<div class="container mt-4">
+  <h2 class="mb-4">All Bookings</h2>
 
-<div class="table-responsive">
-  <table class="table table-hover align-middle shadow-sm">
-    <thead class="table-primary">
-      <tr>
-        <th>ID</th>
-        <th>Patient</th>
-        <th>Doctor</th>
-        <th>Specialization</th>
-        <th>Slot</th>
-        <th>Turn</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for b in bookings %}
-      <tr>
-        <td>{{ b.id }}</td>
-        <td>{{ b.patient }}</td>
-        <td>{{ b.doctor }}</td>
-        <td>{{ b.specialization }}</td>
-        <td>{{ b.slot }}</td>
-        <td>
-          <span class="badge bg-info text-dark">{{ b.turn }}</span>
-        </td>
-        <td>
-          <form method="POST" action="{{ url_for('delete_booking', booking_id=b.id) }}" style="display:inline;">
-            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this booking?');">
-              <i class="bi bi-trash-fill"></i> Delete
-            </button>
-          </form>
-        </td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="7" class="text-center text-muted">No bookings yet.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  {% if bookings %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle shadow-sm">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Specialization</th>
+            <th>Slot</th>
+            <th>Turn</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for b in bookings %}
+          <tr>
+            <td>{{ b.id }}</td>
+            <td>{{ b.patient }}</td>
+            <td>{{ b.doctor.name }}</td>
+            <td>{{ b.doctor.specialization }}</td>
+            <td>
+              {{ b.slot.day or b.slot.date.strftime('%A, %d %b %Y') }} - 
+              {{ b.slot.time or b.slot.start_time.strftime('%I:%M %p') }} - {{ b.slot.end_time.strftime('%I:%M %p') }}
+              {% if b.slot.is_booked %} <span class="badge bg-secondary">Booked</span> {% endif %}
+            </td>
+            <td><span class="badge bg-info text-dark">{{ b.turn_number or b.turn }}</span></td>
+            <td>
+              {% if b.status == "Confirmed" %}
+                <span class="badge bg-success">Confirmed</span>
+              {% elif b.status == "Rescheduled" %}
+                <span class="badge bg-warning text-dark">
+                  Rescheduled {% if b.updated_by_admin %}<small>(by Admin)</small>{% endif %}
+                </span>
+              {% elif b.status == "Canceled" %}
+                <span class="badge bg-danger">
+                  Canceled {% if b.updated_by_admin %}<small>(by Admin)</small>{% endif %}
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">{{ b.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if b.status != "Canceled" %}
+                <form action="{{ url_for('admin_cancel_appointment', appt_id=b.id) }}" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-danger btn-sm mb-1" onclick="return confirm('Cancel this appointment?');">Cancel</button>
+                </form>
+                <a href="{{ url_for('admin_reschedule_appointment', appt_id=b.id) }}" class="btn btn-warning btn-sm mb-1">Reschedule</a>
+              {% else %}
+                <span class="text-muted">No actions</span>
+              {% endif %}
+              <form action="{{ url_for('delete_booking', booking_id=b.id) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-outline-secondary btn-sm mb-1" onclick="return confirm('Delete this booking?');">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">No bookings yet.</p>
+  {% endif %}
+
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
 </div>
 
-<a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+<style>
+  table.table td, table.table th { vertical-align: middle; padding: 12px 15px; }
+  td form, td a.btn { margin-right: 5px; }
+  @media (max-width: 768px) { td form, td a.btn { display: block; margin-bottom: 5px; } }
+</style>
 {% endblock %}

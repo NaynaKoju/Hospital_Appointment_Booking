@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Navbar Full Width -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-0 w-100">
+  <div class="container-fluid px-0">
+    <a class="navbar-brand fw-bold text-primary px-3" href="{{ url_for('patient_dashboard') }}">Nepali Hospital</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto px-3">
+        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+        <li class="nav-item"><a class="nav-link" href="#cta">Book Appointment</a></li>
+
+        {% if current_user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('login_or_signup') }}">Patient Login</a></li>
+        {% endif %}
+
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_login') }}">Admin</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Fullscreen Video -->
+<section class="vh-100 position-relative m-0 p-0 w-100">
+  <video autoplay muted loop playsinline class="position-absolute w-100 h-100 top-0 start-0" style="object-fit: cover;">
+    <source src="{{ url_for('static', filename='videos/hospital-hero.mp4') }}" type="video/mp4">
+    <img src="{{ url_for('static', filename='images/hospital-hero.jpg') }}" alt="Hospital Background">
+  </video>
+
+  <div class="position-absolute w-100 h-100 top-0 start-0" style="background: rgba(0,0,0,0.5);"></div>
+
+  <div class="position-relative d-flex justify-content-center align-items-center h-100 text-center text-white px-3">
+    <div>
+      <h1 class="display-4 fw-bold mb-3 animate__animated animate__fadeInDown">Welcome to Nepali Hospital</h1>
+      <p class="lead mb-4 animate__animated animate__fadeInUp">Caring for your health with advanced medical services and personalized attention.</p>
+      <a href="{{ url_for('login_or_signup') }}" class="btn btn-primary btn-lg shadow-lg animate__animated animate__fadeInUp animate__delay-1s">
+        <i class="bi bi-arrow-right-circle me-2"></i> Get Started
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section Full Width -->
+<section id="features" class="py-5 bg-light m-0 p-0 w-100">
+  <div class="container-fluid px-0">
+    <div class="row g-0">
+      <div class="col-md-4 p-0">
+        <div class="card border-0 shadow-sm h-100 text-center p-3 hover-scale">
+          <i class="bi bi-heart-pulse-fill display-4 mb-3 text-primary"></i>
+          <h5 class="fw-bold mb-2">Expert Doctors</h5>
+          <p>Experienced doctors providing personalized care for every patient.</p>
+        </div>
+      </div>
+      <div class="col-md-4 p-0">
+        <div class="card border-0 shadow-sm h-100 text-center p-3 hover-scale">
+          <i class="bi bi-clock-fill display-4 mb-3 text-success"></i>
+          <h5 class="fw-bold mb-2">Timely Appointments</h5>
+          <p>Book appointments easily and avoid long waiting times.</p>
+        </div>
+      </div>
+      <div class="col-md-4 p-0">
+        <div class="card border-0 shadow-sm h-100 text-center p-3 hover-scale">
+          <i class="bi bi-hospital-fill display-4 mb-3 text-danger"></i>
+          <h5 class="fw-bold mb-2">Modern Facilities</h5>
+          <p>Equipped with latest tools and technology for better care.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section Full Width -->
+<section class="py-5 text-center bg-white m-0 p-0 w-100">
+  <div class="container-fluid px-0">
+    <div class="row g-0">
+      <div class="col-md-4 p-0">
+        <h3 class="text-primary fw-bold">500+</h3>
+        <p>Patients Served</p>
+      </div>
+      <div class="col-md-4 p-0">
+        <h3 class="text-success fw-bold">50+</h3>
+        <p>Expert Doctors</p>
+      </div>
+      <div class="col-md-4 p-0">
+        <h3 class="text-danger fw-bold">20+</h3>
+        <p>Years of Experience</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Full Width -->
+<section id="cta" class="py-5 text-center m-0 p-0 w-100" style="background: #2575fc; color: white;">
+  <div class="container-fluid px-0">
+    <h2 class="fw-bold mb-3">Ready to book your appointment?</h2>
+    <a href="{{ url_for('login_or_signup') }}" class="btn btn-light btn-lg shadow-sm">
+      <i class="bi bi-calendar-check-fill me-2"></i> Book Now
+    </a>
+  </div>
+</section>
+
+{% endblock %}
+
+<style>
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.hover-scale:hover {
+  transform: translateY(-5px);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover, .btn-light:hover {
+  transform: translateY(-2px);
+  transition: all 0.2s ease-in-out;
+}
+
+.vh-100 {
+  min-height: 100vh;
+}
+
+video {
+  display: block;
+}
+</style>

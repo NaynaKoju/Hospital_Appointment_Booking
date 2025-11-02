@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Your Appointments</h2>
+
+  {% if appointments %}
+    <div class="table-responsive">
+      <table class="table table-hover table-striped align-middle shadow-sm">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Doctor</th>
+            <th>Specialization</th>
+            <th>Slot</th>
+            <th>Turn</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+          <tr>
+            <td>{{ appt.id }}</td>
+            <td>{{ appt.doctor.name }}</td>
+            <td>{{ appt.doctor.specialization }}</td>
+            <td>
+              {{ appt.slot.day or appt.slot.date.strftime('%A, %d %b %Y') }} -
+              {{ appt.slot.time or appt.slot.start_time.strftime('%I:%M %p') }}
+              {% if appt.slot.is_booked %}(Booked){% endif %}
+            </td>
+            <td><span class="badge bg-info text-dark">{{ appt.turn_number }}</span></td>
+            <td>
+              {% if appt.status == "Confirmed" %}
+                <span class="badge bg-success">Confirmed</span>
+              {% elif appt.status in ["Rescheduled", "Canceled"] %}
+                <span class="badge {% if appt.status == "Rescheduled" %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                  {{ appt.status }}
+                  {% if appt.updated_by_admin %}
+                    <small>(by Admin)</small>
+                  {% else %}
+                    <small>(by You)</small>
+                  {% endif %}
+                </span>
+              {% else %}
+                <span class="badge bg-secondary">{{ appt.status }}</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if appt.status == "Confirmed" %}
+                <form action="{{ url_for('cancel_appointment', appt_id=appt.id) }}" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-danger btn-sm mb-1" onclick="return confirm('Are you sure you want to cancel this appointment?');">Cancel</button>
+                </form>
+                <a href="{{ url_for('reschedule_appointment', appt_id=appt.id) }}" class="btn btn-warning btn-sm mb-1">Reschedule</a>
+              {% else %}
+                <span class="text-muted">No actions</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">You have no appointments yet. <a href="{{ url_for('view_doctors') }}">Book an appointment now</a>.</p>
+  {% endif %}
+
+  <a href="{{ url_for('view_doctors') }}" class="btn btn-primary mt-3">View Doctors</a>
+</div>
+
+<style>
+  table.table td, table.table th { vertical-align: middle; padding: 12px 15px; }
+  td form, td a.btn { margin-right: 5px; }
+  @media (max-width: 768px) { td form, td a.btn { display: block; margin-bottom: 5px; } }
+</style>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "admin/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">All Doctors and Slots</h2>
+
+  {% for item in doctor_slots %}
+    <h4>{{ item.doctor.name }} ({{ item.doctor.specialization }})</h4>
+    <div class="table-responsive mb-4">
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for slot in item.slots %}
+          <tr>
+            <td>{{ slot.day or slot.date.strftime('%A, %d %b %Y') }}</td>
+            <td>
+              {{ slot.time or slot.start_time.strftime('%I:%M %p') }} - {{ slot.end_time.strftime('%I:%M %p') }}
+              {% if slot.is_booked %} <span class="badge bg-secondary">Booked</span> {% endif %}
+            </td>
+            <td>
+              {% if slot.is_booked %}
+                <span class="badge bg-danger">Booked</span>
+              {% else %}
+                <span class="badge bg-success">Available</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
+
+  <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

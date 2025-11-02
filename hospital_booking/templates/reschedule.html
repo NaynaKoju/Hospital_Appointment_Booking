@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Reschedule Appointment{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Reschedule Appointment</h2>
+
+    <p><strong>Doctor:</strong> {{ appointment.doctor.name }} ({{ appointment.doctor.specialization }})</p>
+    <p>
+        <strong>Current Slot:</strong>
+        {% if appointment.slot and appointment.slot.start_time and appointment.slot.end_time %}
+            {{ appointment.slot.date.strftime('%A, %d %b %Y') }},
+            {{ appointment.slot.start_time.strftime('%I:%M %p') }} -
+            {{ appointment.slot.end_time.strftime('%I:%M %p') }}
+        {% else %}
+            <span class="text-muted">N/A</span>
+        {% endif %}
+    </p>
+
+    <form method="POST" class="mt-4">
+        <div class="mb-3">
+            <label for="slot" class="form-label"><strong>Select New Slot</strong></label>
+            <select name="slot" id="slot" class="form-select" required>
+                {% for slot in slots %}
+                    {% set active_appts = slot.appointments
+                        | selectattr('status', 'ne', 'Canceled')
+                        | selectattr('status', 'ne', 'Rescheduled (by Admin)')
+                        | list %}
+                    <option value="{{ slot.id }}"
+                            {% if slot.id == appointment.slot_id %}disabled{% endif %}>
+                        {{ slot.date.strftime('%A, %d %b %Y') }},
+                        {{ slot.start_time.strftime('%I:%M %p') }} -
+                        {{ slot.end_time.strftime('%I:%M %p') }}
+                        {% if active_appts|length > 0 %}
+                            (Booked: {{ active_appts|length }})
+                        {% else %}
+                            (Available)
+                        {% endif %}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Reschedule</button>
+        <a href="{{ url_for('user_dashboard') if current_user.is_authenticated else url_for('view_bookings') }}"
+           class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

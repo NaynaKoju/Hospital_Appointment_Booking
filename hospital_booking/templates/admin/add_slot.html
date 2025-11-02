@@ -1,24 +1,50 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
 {% block content %}
-<h2>Add Slot</h2>
-<form method="POST" class="mt-3">
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Add Slot</h2>
+
+  <form method="POST" class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
+    
+    <!-- Doctor Selection -->
     <div class="mb-3">
-        <label class="form-label">Select Doctor</label>
-        <select name="doctor" class="form-select" required>
-            {% for doctor in doctors %}
-            <option value="{{ doctor.id }}">{{ doctor.name }} ({{ doctor.specialization }})</option>
-            {% endfor %}
-        </select>
+      <label class="form-label fw-bold">Select Doctor</label>
+      <select name="doctor" class="form-select" required>
+        <option value="">-- Select Doctor --</option>
+        {% for doctor in doctors %}
+          <option value="{{ doctor.id }}">{{ doctor.name }} ({{ doctor.specialization }})</option>
+        {% endfor %}
+      </select>
     </div>
+
+    <!-- Date -->
     <div class="mb-3">
-        <label class="form-label">Day (YYYY-MM-DD)</label>
-        <input type="text" name="day" class="form-control" required>
+      <label class="form-label fw-bold">Select Date</label>
+      <input type="date" name="date" class="form-control" required>
     </div>
+
+    <!-- Start Time -->
     <div class="mb-3">
-        <label class="form-label">Time (HH:MM AM/PM)</label>
-        <input type="text" name="time" class="form-control" required>
+      <label class="form-label fw-bold">Start Time</label>
+      <input type="time" name="start_time" class="form-control" required>
     </div>
-    <button type="submit" class="btn btn-success">Add Slot</button>
-    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Back</a>
-</form>
+
+    <!-- End Time -->
+    <div class="mb-3">
+      <label class="form-label fw-bold">End Time</label>
+      <input type="time" name="end_time" class="form-control" required>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <button type="submit" class="btn btn-success">Add Slot</button>
+    </div>
+
+  </form>
+</div>
+
+<style>
+  label.form-label { font-weight: 500; }
+  select.form-select, input.form-control { border-radius: 10px; }
+  form.card { border-radius: 15px; }
+</style>
 {% endblock %}

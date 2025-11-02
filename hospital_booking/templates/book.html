@@ -1,23 +1,55 @@
 {% extends "base.html" %}
+{% block title %}Book Appointment{% endblock %}
 {% block content %}
-<h2>Book Appointment with Dr. {{ doctor.name }}</h2>
-<p class="text-muted">Specialization: {{ doctor.specialization }}</p>
+<div class="container mt-4">
+    <h2>Book Appointment with {{ doctor.name }}</h2>
+    <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
 
-<form method="POST" class="mt-4">
-    <div class="mb-3">
-        <label class="form-label">Your Name:</label>
-        <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
-    </div>
+    <form method="POST">
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                    {% set active_appts = slot.appointments
+                        | selectattr('status', 'ne', 'Canceled')
+                        | selectattr('status', 'ne', 'Rescheduled (by Admin)')
+                        | list %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ slot.date.strftime('%A, %d %b %Y') if slot.date else 'N/A' }}</td>
+                        <td>{{ slot.start_time.strftime('%I:%M %p') if slot.start_time else 'N/A' }}</td>
+                        <td>{{ slot.end_time.strftime('%I:%M %p') if slot.end_time else 'N/A' }}</td>
+                        <td>
+                            {% if active_appts|length > 0 %}
+                                Booked ({{ active_appts|length }})
+                            {% else %}
+                                Available
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if active_appts|length == 0 %}
+                                <button type="submit" name="slot" value="{{ slot.id }}" class="btn btn-primary btn-sm">
+                                    Book
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary btn-sm" disabled>Booked</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
 
-    <div class="mb-3">
-        <label class="form-label">Select Slot:</label>
-        <select name="slot" class="form-select" required>
-            {% for slot in slots %}
-            <option value="{{ slot.id }}">{{ slot.day }} - {{ slot.time }}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Book Appointment</button>
-</form>
+    <a href="{{ url_for('view_doctors') }}" class="btn btn-secondary mt-3">Back to Doctors</a>
+</div>
 {% endblock %}

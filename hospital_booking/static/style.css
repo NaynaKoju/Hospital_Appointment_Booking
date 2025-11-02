@@ -1,9 +1,39 @@
 /* ===== Body & General ===== */
-body {
-    background-color: #f4f7fc;  /* Soft light background */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
+
+.wrapper {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1 0 auto; /* Grow content to push footer down */
+}
+
+/* ===== Footer ===== */
+footer {
+    background-color: #f8f9fa;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Remove unnecessary bottom margin for tables */
+table {
+    margin-bottom: 0;
+}
+
+/* Optional: Adjust table scroll for smaller screens */
+.table-responsive {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
 
 /* ===== Navbar ===== */
 .navbar {
@@ -20,6 +50,37 @@ body {
 .nav-link:hover {
     color: #ffdd57 !important;
 }
+
+.vh-100 {
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+    padding: 0;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+} 
 
 /* ===== Buttons ===== */
 .btn-primary {
